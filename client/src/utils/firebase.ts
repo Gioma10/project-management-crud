@@ -6,7 +6,7 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
+  apiKey: import.meta.env.VITE_API_KEY,
   authDomain: "codechallenge-drivedrop.firebaseapp.com",
   projectId: "codechallenge-drivedrop",
   storageBucket: "codechallenge-drivedrop.firebasestorage.app",
