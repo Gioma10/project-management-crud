@@ -11,7 +11,8 @@ const [addingProject, setAddingProjects] = useState<boolean>(false)
 
 const fecthAPI = async ()=>{
   try {
-    const response = await axios.get('http://localhost:8080/api')
+    setLoading(false);
+    const response = await axios.get('http://localhost:8080/api/projects')
     setProjects(response.data.projects)
     // console.log(response.data.projects)
   } catch (error) {
@@ -31,6 +32,8 @@ const fecthAPI = async ()=>{
         {projects.length > 0 ?
           <div className="flex gap-5">
             {projects.map((project, index)=>{
+              console.log(project);
+              
               return (
                 <Card key={index} project={project}/>
               )
@@ -41,7 +44,7 @@ const fecthAPI = async ()=>{
         }
 
         <div className="flex gap-2">
-          <Button>View All</Button>
+          <Button>Edit</Button>
           <Button onSelect={() => setAddingProjects(true)}>+</Button>
         </div>
 
