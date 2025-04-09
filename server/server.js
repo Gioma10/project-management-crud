@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
+app.use(express.json());  // Aggiungi questa riga per parsare il body delle richieste
 const cors = require("cors");
 const admin = require("firebase-admin");
+
 
 // Inizializzazione di Firebase Admin
 const serviceAccount = require("./config/codechallenge-drivedrop-firebase-adminsdk-fbsvc-5846502277.json"); // Sostituisci con il percorso del file .json delle credenziali
@@ -77,6 +79,34 @@ app.delete('/api/projects/:id', async (req, res) => {
   } catch (error) {
     console.error("Error deleting project: ", error);
     res.status(500).json({ error: "Failed to delete project" });
+  }
+});
+
+// Endpoint per eliminare un progetto
+app.put('/api/projects/:id', async (req, res) => {
+  const projectId = req.params.id; // Ottieni l'ID dal parametro dell'URL
+  const updatedProject = req.body; // I dati aggiornati vengono passati nel body della richiesta
+
+  
+
+  try {
+    // Cerca il progetto nel database
+    const projectRef = db.collection('projects').doc(projectId);
+
+    // Controlla se il progetto esiste
+    const doc = await projectRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Aggiorna il progetto con i nuovi dati
+    await projectRef.update(updatedProject);
+
+    // Restituisci la risposta di successo
+    res.status(200).json({ message: "Project updated successfully" });
+  } catch (error) {
+    console.error("Error updating project:", error);
+    res.status(500).json({ error: "Failed to update project" });
   }
 });
 
