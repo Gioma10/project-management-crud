@@ -6,8 +6,8 @@ const Navbar: React.FC = ()=>{
         {name: 'projects', href: '/projects'}
     ]
     return (
-        <nav className="fixed top-0 shadow-2xl">
-            <ul className="flex justify-center items-center gap-5 p-2 mt-5 border rounded-xl">
+        <nav className="fixed top-0">
+            <ul className="flex justify-center items-center gap-5 p-2 mt-5 rounded-xl">
                 {
                     navElements.map((item, index)=>{
                         return (
