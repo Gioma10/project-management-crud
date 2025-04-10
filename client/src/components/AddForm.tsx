@@ -12,7 +12,7 @@ const AddForm: React.FC<FormProps> = ({onClose})=>{
     const [title, setTitle]= useState<string>('')
     const [desc, setDesc]= useState<string>('')
 
-// Funzione per salvare nel database Firestore
+    // Funzione per salvare nel database Firestore
     const handleSave = async (event: any) => {
         event.preventDefault();
 
@@ -26,7 +26,7 @@ const AddForm: React.FC<FormProps> = ({onClose})=>{
 
             console.log("Project saved successfully with ID:", docRef.id);
 
-            // Resetta i campi del form dopo il salvataggio
+            // Resetta i campi del form 
             setTitle('');
             setDesc('');
 

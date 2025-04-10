@@ -38,7 +38,7 @@ const ProjectDetails: React.FC = () => {
             .catch(err => {
                 console.error("Errore nel fetch dei task", err);
             });
-    }, [id, addingTask]);
+    }, [id, addingTask, editingTask]);
     
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;

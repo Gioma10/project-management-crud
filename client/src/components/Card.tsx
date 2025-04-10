@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import Button from "./Button";
 import { MdCancelPresentation } from "react-icons/md";
+import axios from "axios";
 
 interface Project {
     id: string;
@@ -20,23 +21,20 @@ const Card: React.FC<CardProps> = ({project, onDelete, onEdit})=>{
     
 
     const handleDelete = async (id: string) => {
-    
-        try {
-          // Invia la richiesta DELETE al backend
-          const response = await fetch(`http://localhost:8080/api/projects/${id}`, {
-            method: "DELETE",
-          });
-    
-          if (!response.ok) {
-            throw new Error("Failed to delete project");
-          }
-    
+      try {
+
+        const response = await axios.delete(`http://localhost:8080/api/projects/${id}`);
+        
+        if (response.status === 200) {
           // Notifica il componente padre che il progetto è stato eliminato
           onDelete(id); // Rimuovi il progetto dalla lista (a livello di stato)
-        } catch (error) {
-          console.error("Error deleting project:", error);
+        } else {
+          throw new Error("Failed to delete project");
         }
-      };
+      } catch (error) {
+        console.error("Error deleting project:", error);
+      }
+    };
     
     return (
         <div

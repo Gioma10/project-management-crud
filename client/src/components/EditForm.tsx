@@ -48,8 +48,8 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose, onSave }) => {
             value={description}
             handleChange={(e) => setDescription(e.target.value)}
             />
-        <div className="flex gap-2">
-          <button type="submit">Save</button>
+        <div className="flex justify-center">
+          <button type="submit" className="hover:border-white border-b-1 border-transparent cursor-pointer">Save</button>
         </div>
       </form>
     </div>

@@ -22,7 +22,7 @@ const Projects: React.FC = ()=>{
     try {
       setLoading(true);
       const response = await axios.get('http://localhost:8080/api/projects');
-      console.log(response.data.projects);  // Verifica che l'ID sia qui
+      // console.log(response.data.projects);  // Verifica che l'ID sia qui
       setProjects(response.data.projects);
 
     } catch (error) {
