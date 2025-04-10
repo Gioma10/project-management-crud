@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import Button from "./Button";
 import Input from "./Input";
+import { GiCancel } from "react-icons/gi";
 
 interface Project {
     id: string;
@@ -34,6 +34,7 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose, onSave }) => {
 
   return (
     <div className="w-1/3 rounded-lg shadow-mdshadow bg-[#4C5B61] min-w-82 p-10 flex flex-col gap-5 relative text-white">
+      <GiCancel onClick={onClose} className="absolute right-2 top-2 cursor-pointer text-xl"/>
       <h2 className="text-2xl text-center mb-4">Edit Project</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
@@ -49,7 +50,6 @@ const EditForm: React.FC<EditFormProps> = ({ project, onClose, onSave }) => {
             />
         <div className="flex gap-2">
           <button type="submit">Save</button>
-          <Button onSelect={onClose}>Cancel</Button>
         </div>
       </form>
     </div>

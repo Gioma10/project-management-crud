@@ -1,9 +1,11 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import Button from "../components/Button";
 import TaskForm from "../components/TaskForm";
 import { MdCancel } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import EditTaskForm from "../components/EditTaskForm";
 
 const ProjectDetails: React.FC = () => {
     const { id } = useParams();  // Estrai l'ID dal URL
@@ -11,15 +13,15 @@ const ProjectDetails: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);  // Stato per gestire il caricamento
     const [error, setError] = useState<string>("");
     const [addingTask, setAddingTask] = useState<boolean>(false)
+    const [editingTask, setEditingTask] = useState<any>(null);  // Stato per la task da modificare
     const [tasks, setTasks] = useState<any[]>([]);
-
+    
     useEffect(() => {
         if (id) {
-            // Effettua la fetch per ottenere i dettagli del progetto
-            fetch(`http://localhost:8080/api/projects/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    setProject(data);
+            // Fetch dei dettagli del progetto
+            axios.get(`http://localhost:8080/api/projects/${id}`)
+                .then(response => {
+                    setProject(response.data);
                     setLoading(false);
                 })
                 .catch(err => {
@@ -27,17 +29,36 @@ const ProjectDetails: React.FC = () => {
                     setLoading(false);
                 });
         }
-
-
+    
         // Fetch dei task
-        fetch(`http://localhost:8080/api/projects/${id}/tasks`)
-            .then(res => res.json())
-            .then(data => setTasks(data.tasks))
-            .catch(err => console.error("Errore nel fetch dei task", err));
+        axios.get(`http://localhost:8080/api/projects/${id}/tasks`)
+            .then(response => {
+                setTasks(response.data.tasks);
+            })
+            .catch(err => {
+                console.error("Errore nel fetch dei task", err);
+            });
     }, [id, addingTask]);
     
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
+
+    const handleDeleteTask = (taskId: string) => {
+        if (id) {
+            axios.delete(`http://localhost:8080/api/projects/${id}/tasks/${taskId}`)
+                .then((response) => {
+                    if (response.status === 200) {
+                        // Se la cancellazione è riuscita, aggiorna lo stato
+                        setTasks(tasks.filter((task) => task.id !== taskId));
+                    } else {
+                        console.error("Failed to delete task");
+                    }
+                })
+                .catch((err) => {
+                    console.error("Error deleting task:", err);
+                });
+        }
+    };
 
     return (
         <div className="w-screen h-screen flex justify-start items-center">
@@ -60,12 +81,15 @@ const ProjectDetails: React.FC = () => {
                                 <>
                                     {tasks.map((task) => (
                                         <div key={task.id} className="relative group">
-                                            <li className={` cursor-pointer p-2 z-10 rounded-xl shadow hover:shadow-white transition-all duration-200 ${task.completed && 'line-through text-gray-500'}`}>
+                                            <li className={`cursor-pointer z-10 p-2 rounded-xl shadow hover:shadow-white transition-all duration-200 ${task.completed && 'line-through text-gray-500'}`}>
                                                 {task.title}
                                             </li>
-                                            <MdCancel className="cursor-pointer z-0 hover:text-red-700 absolute top-1/2 -translate-y-[50%] w-8 border right-0 group-hover:translate-x-8 transition-all duration-300"/>
-                                            <CiEdit className="cursor-pointer z-0 hover:text-yellow-500 absolute top-1/2 -translate-y-[50%] w-8 left-0 group-hover:-translate-x-8 transition-all duration-300"/>
-
+                                            <MdCancel 
+                                                onClick={() => handleDeleteTask(task.id)} // Chiama la funzione di eliminazione quando viene cliccata l'icona
+                                                className="text-lg cursor-pointer opacity-0 group-hover:opacity-100 hover:text-red-700 absolute top-1/2 -translate-y-[50%] w-8 right-0 group-hover:translate-x-8 transition-all duration-300"/>
+                                            <CiEdit 
+                                                onClick={() => setEditingTask(task)}
+                                                className="text-lg cursor-pointer opacity-0 group-hover:opacity-100 hover:text-yellow-500 absolute top-1/2 -translate-y-[50%] w-8 left-0 group-hover:-translate-x-8 transition-all duration-300"/>
                                         </div>
                                     ))}
                                 </>
@@ -85,7 +109,18 @@ const ProjectDetails: React.FC = () => {
                         projectId={id}
                         onClose={() => setAddingTask(false)}/>
                 </div>
-                }
+            }
+
+            {editingTask && id &&
+                <div className="fixed h-full w-full bg-black/50 backdrop-blur-xs flex justify-center items-center">
+                    {/* modulo  */}
+                    <EditTaskForm 
+                        taskId={editingTask.id}  // Passa l'ID della task da modificare
+                        currentTitle={editingTask.title}  // Passa il titolo corrente della task
+                        projectId={id}
+                        onClose={() => setEditingTask(null)}/>
+                </div>
+            }
         </div>
     );
 };

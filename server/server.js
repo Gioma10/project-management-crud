@@ -134,6 +134,60 @@ app.get("/api/projects/:id/tasks", async (req, res) => {
   }
 });
 
+// Endpoint per eliminare una task di un progetto
+app.delete("/api/projects/:projectId/tasks/:taskId", async (req, res) => {
+  const { projectId, taskId } = req.params;  // Ottieni gli ID del progetto e della task dai parametri della URL
+
+  try {
+    const taskRef = db
+      .collection("projects")
+      .doc(projectId)
+      .collection("tasks")
+      .doc(taskId);  // Ottieni il riferimento alla task nel progetto specifico
+
+    const taskDoc = await taskRef.get();
+    
+    if (!taskDoc.exists) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    await taskRef.delete();  // Elimina la task
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting task: ", error);
+    res.status(500).json({ error: "Failed to delete task" });
+  }
+});
+
+// Endpoint per aggiornare una task di un progetto
+app.put("/api/projects/:projectId/tasks/:taskId", async (req, res) => {
+  // console.log('PUT request received');
+  const { projectId, taskId } = req.params;
+  const updatedTask = req.body;
+
+  console.log(`Updating task ${taskId} in project ${projectId} with data:`, updatedTask); // Log per verificare i dati
+
+  try {
+    const taskRef = db
+      .collection("projects")
+      .doc(projectId)
+      .collection("tasks")
+      .doc(taskId);
+
+    const taskDoc = await taskRef.get();
+    if (!taskDoc.exists) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    await taskRef.update(updatedTask);
+
+    res.status(200).json({ message: "Task updated successfully" });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ error: "Failed to update task" });
+  }
+});
+
 
 
 app.listen(8080, () => {

@@ -19,7 +19,7 @@ const TaskForm: React.FC<FormProps> = ({onClose, projectId})=>{
             event.preventDefault();
 
 
-            console.log("Saving task for projectId:", projectId);
+            console.log("Saving task");
             if (!title) {
                 alert("Please provide a title for the task.");
                 return;
