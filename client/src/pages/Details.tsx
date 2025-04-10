@@ -60,6 +60,34 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    const handleToggleCompleted = (taskId: string) => {
+        // Trova il task che è stato cliccato
+        const updatedTasks = tasks.map(task => {
+            if (task.id === taskId) {
+                // Cambia il valore di completed
+                const updatedTask = { ...task, completed: !task.completed };
+                
+                // Effettua la richiesta PUT per aggiornare lo stato della task
+                axios.put(`http://localhost:8080/api/projects/${id}/tasks/${taskId}`, updatedTask)
+                    .then(response => {
+                        if (response.status === 200) {
+                            // Aggiorna lo stato locale solo dopo aver ricevuto la risposta positiva
+                            return updatedTask;
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Errore nell'aggiornare la task", err);
+                    });
+                
+                return updatedTask; // Restituisci l'oggetto aggiornato
+            }
+            return task;
+        });
+
+        // Aggiorna il set di task nel componente
+        setTasks(updatedTasks);
+    };
+
     return (
         <div className="w-screen h-screen flex justify-start items-center">
 
@@ -81,7 +109,9 @@ const ProjectDetails: React.FC = () => {
                                 <>
                                     {tasks.map((task) => (
                                         <div key={task.id} className="relative group">
-                                            <li className={`cursor-pointer z-10 p-2 rounded-xl shadow hover:shadow-white transition-all duration-200 ${task.completed && 'line-through text-gray-500'}`}>
+                                            <li 
+                                                onClick={() => handleToggleCompleted(task.id)}
+                                                className={`cursor-pointer z-10 p-2 rounded-xl shadow hover:shadow-white transition-all duration-200 ${task.completed && 'line-through text-white/30'}`}>
                                                 {task.title}
                                             </li>
                                             <MdCancel 
