@@ -111,6 +111,30 @@ app.put('/api/projects/:id', async (req, res) => {
 });
 
 
+// Endpoint per ottenere i task di un progetto
+app.get("/api/projects/:id/tasks", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const tasksSnapshot = await db
+      .collection("projects")
+      .doc(id)
+      .collection("tasks")
+      .get();
+
+    const tasks = tasksSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json({ tasks });
+  } catch (error) {
+    console.error("Error fetching tasks: ", error);
+    res.status(500).json({ error: "Failed to fetch tasks" });
+  }
+});
+
+
 
 app.listen(8080, () => {
   console.log("Server started on port 8080");

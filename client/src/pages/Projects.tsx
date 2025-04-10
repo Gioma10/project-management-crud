@@ -58,7 +58,7 @@ const Projects: React.FC = ()=>{
     return (
         <div className="h-screen bg-[#4D6A6D] gap-12 flex flex-col justify-center items-center text-[#C5C5C5]">
         <h1 className="text-6xl">Projects</h1>
-        {loading && <p className="animate-pulse">Caricamento...</p>}
+        {loading && <p className="animate-pulse">Loading...</p>}
         {projects.length > 0 ?
           <div className="flex gap-12">
             {projects.map((project)=>{
@@ -68,7 +68,7 @@ const Projects: React.FC = ()=>{
             })}
           </div>
           :
-          <p>Non ci sono progetti...</p>
+          <p>No projects...</p>
         }
 
         <div className="flex gap-2">
